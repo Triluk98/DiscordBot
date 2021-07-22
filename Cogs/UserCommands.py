@@ -14,10 +14,14 @@ def is_not_pinned(msg):
 
 class UserCommands(commands.Cog):
 
-    def __init__(self, client2):
-        self.client = client2
+    def __init__(self, client):
+        self.client = client
 
     # Events
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("UserCommands online.")
+
     @commands.Cog.listener()
     async def on_ready(self):
         print("User Commands ready.")

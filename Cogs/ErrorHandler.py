@@ -1,6 +1,3 @@
-import discord
-import traceback
-import sys
 from discord.ext import commands
 
 
@@ -22,12 +19,6 @@ class ErrorHandler(commands.Cog):
         # If comment does not exist
         if isinstance(error, commands.CommandNotFound):
             await ctx.send("Invalid command. Please check out '.help' to see all commands.")
-
-        # This prevents any cogs with an overwritten cog_command_error being handled here.
-        cog = ctx.cog
-        if cog:
-            if cog._get_overridden_method(cog.cog_command_error) is not None:
-                return
 
         ignored = (commands.CommandNotFound,)
 

@@ -29,7 +29,7 @@ class ModCommands(commands.Cog):
     # Events
     @commands.Cog.listener()
     async def on_ready(self):
-        print("ModCommands ready.")
+        print("ModCommands online.")
 
     # Commands
     @commands.command()

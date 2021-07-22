@@ -16,9 +16,10 @@ def change_icon():
 
 @client.event
 async def on_ready():
+    print("Bot online.")
     channel = client.get_channel(id=802602247983857717)
-    if not client.is_closed():
-        await channel.send("I'm back bitches. :^)")
+    # if not client.is_closed():
+        # await channel.send("I'm back bitches. :^)")
     # change_icon()
 
 

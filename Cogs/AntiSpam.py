@@ -7,7 +7,7 @@ async def clear_file():
     while True:
         with open("Cogs/spam_detect.txt", "r+") as file:
             file.truncate(0)
-        await asyncio.sleep(3600)
+        await asyncio.sleep(60)
 
 
 class AntiSpam(commands.Cog):
@@ -17,7 +17,7 @@ class AntiSpam(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("AntiSpam running.")
+        print("AntiSpam online.")
         await clear_file()
 
     @commands.Cog.listener()
@@ -29,11 +29,11 @@ class AntiSpam(commands.Cog):
                     counter += 1
 
             file.writelines(f"{str(message.author.id)}\n")
-            if counter > 8:
+            if counter > 10:
                 await message.guild.ban(message.author, reason="Spam")
                 await asyncio.sleep(1)
                 await message.guild.unban(message.author)
-                await message.channel.send("User {} got kicked from the Server. Reason: Spam".format(message.author))
+                await message.channel.send("User {} got kicked from the Server for spamming.".format(message.author))
                 await clear_file()
 
 

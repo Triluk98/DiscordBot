@@ -2,6 +2,7 @@ from discord.ext import commands
 import asyncio
 
 
+# Empty txt file so user can join again
 async def clear_file():
     while True:
         with open("Cogs/spam_detect.txt", "r+") as file:
@@ -24,7 +25,7 @@ class AntiSpam(commands.Cog):
         counter = 0
         with open("Cogs/spam_detect.txt", "r+") as file:
             for lines in file:
-                if lines.strip("\n") == str(message.author.id):
+                if lines.strip("\n") == str(message.author.id):  # counts message for one user
                     counter += 1
 
             file.writelines(f"{str(message.author.id)}\n")

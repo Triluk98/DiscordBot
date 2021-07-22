@@ -9,7 +9,7 @@ def is_not_pinned(msg):
 def get_user(message, user):
     try:
         member = message.mentions[0]
-    except:
+    except message.mentions[0] is None:
         member = message.guild.get_member_named(user)
     if not member:
         try:
@@ -26,6 +26,7 @@ class ModCommands(commands.Cog):
     def __int__(self, client):
         self.client = client
 
+    # Events
     @commands.Cog.listener()
     async def on_ready(self):
         print("ModCommands ready.")
@@ -43,14 +44,9 @@ class ModCommands(commands.Cog):
         else:
             await message.channel.send("Clear command: No permission.")
 
-    @clear.error
-    async def clear_error(self, message, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await message.send("Argument [Message Count] missing.")
-
-
     @commands.command()
     async def kick(self, ctx, user, *, reason=""):
+        """Kicks a user"""
         user = get_user(ctx.message, user)
         if user:
             try:
@@ -59,12 +55,11 @@ class ModCommands(commands.Cog):
                 if reason:
                     return_msg += " for reason '{}'".format(reason)
                 return_msg += "."
-                await ctx.message.edit(content=self.client.bot_prefix + return_msg)
+                await ctx.send(return_msg)
             except discord.Forbidden:
-                await ctx.message.edit(content=self.client.bot_prefix + "Could not kick user, no permissions.")
+                await ctx.send("Could not kick user, no permissions.")
         else:
-            return await ctx.message.edit(content=self.client.bot_prefix + "Could not find user.")
-
+            return await ctx.send("Could not find user.")
 
     @commands.command()
     async def hackban(self, ctx, user_id: int):
@@ -78,17 +73,15 @@ class ModCommands(commands.Cog):
 
         try:
             await self.client.http.ban(user_id, guild.id, 0)
-            await ctx.message.edit(content=self.client.bot_prefix + 'Banned user: %s' % user_id)
+            await ctx.send("Banned user: {}".format(user_id))
         except discord.NotFound:
-            await ctx.message.edit(content=self.client.bot_prefix + 'Could not find user. '
-                                                                 'Invalid user ID was provided.')
+            await ctx.send("Invalid user ID.")
         except discord.errors.Forbidden:
-            await ctx.message.edit(content=self.client.bot_prefix + 'Could not ban user. Not enough permissions.')
-
+            await ctx.send("Not enough permissions.")
 
     @commands.command()
     async def ban(self, ctx, user, *, reason=""):
-        """Bans a user (if you have the permission)."""
+        """Bans a user."""
         user = get_user(ctx.message, user)
         if user:
             try:
@@ -97,33 +90,44 @@ class ModCommands(commands.Cog):
                 if reason:
                     return_msg += " for reason `{}`".format(reason)
                 return_msg += "."
-                await ctx.message.edit(content=self.client.bot_prefix + return_msg)
+                await ctx.send(return_msg)
             except discord.Forbidden:
-                await ctx.message.edit(content=self.client.bot_prefix + 'Could not ban user. Not enough permissions.')
+                await ctx.send('Could not ban user. Not enough permissions.')
         else:
-            return await ctx.message.edit(content=self.client.bot_prefix + 'Could not find user.')
+            return await ctx.send('Could not find user.')
 
     @commands.command()
     async def softban(self, ctx, user, *, reason=""):
-        """Bans and unbans a user (if you have the permission)."""
+        """Bans and unbans a user."""
         user = get_user(ctx.message, user)
         if user:
             try:
                 await user.ban(reason=reason)
                 await ctx.guild.unban(user)
-                return_msg = "Banned and unbanned user `{}`".format(user.mention)
+                return_msg = "Banned and unbanned user `{}`".format(user.name)
                 if reason:
                     return_msg += " for reason `{}`".format(reason)
                 return_msg += "."
-                await ctx.message.edit(content=self.client.bot_prefix + return_msg)
+                await ctx.send(return_msg)
             except discord.Forbidden:
-                await ctx.message.edit(content=self.client.bot_prefix + 'Could not softban user. Not enough permissions.')
+                await ctx.send("Not enough permissions.")
         else:
-            return await ctx.message.edit(content=self.client.bot_prefix + 'Could not find user.')
+            return await ctx.channel.send("User not found.")
+
+    @commands.command()
+    async def unban(self, ctx, member):
+        banned_users = await ctx.guild.bans()
+        member_name, member_discriminator = member.split('#')
+
+        for ban_entry in banned_users:
+            user = ban_entry.user
+            if (user.name, user.discriminator) == (member_name, member_discriminator):
+                await ctx.guild.unban(user)
+                await ctx.channel.send("Unbanned user {}.".format(user.mention))
 
     @commands.command()
     async def mute(self, ctx, *, user: str):
-        """Chat mutes a user (if you have the permission)."""
+        """Chat mutes a user."""
         if ctx.invoked_subcommand is None:
             user = get_user(ctx.message, user)
             if user and user != self.client.user:
@@ -140,18 +144,18 @@ class ModCommands(commands.Cog):
                     except discord.Forbidden:
                         failed.append(channel)
                 if failed and len(failed) < channel_length:
-                    await ctx.message.edit(content=self.client.bot_prefix + "Muted user in {}/{} channels: {}".format(
+                    await ctx.send("Muted user in {}/{} channels: {}".format(
                         channel_length - len(failed), channel_length, user.mention))
                 elif failed:
-                    await ctx.message.edit(content=self.client.bot_prefix + "Failed to mute user. Not enough permissions.")
+                    await ctx.send("Not enough permissions.")
                 else:
-                    await ctx.message.edit(content=self.client.bot_prefix + 'Muted user: %s' % user.mention)
+                    await ctx.send("Muted user: {}".format(user.mention))
             else:
-                await ctx.message.edit(content=self.client.bot_prefix + 'Could not find user.')
+                await ctx.send("User not found.")
 
     @commands.command()
     async def unmute(self, ctx, *, user: str):
-        """Unmutes a user (if you have the permission)."""
+        """Unmutes a user."""
         if ctx.invoked_subcommand is None:
             user = get_user(ctx.message, user)
             if user:
@@ -182,6 +186,47 @@ class ModCommands(commands.Cog):
                     await ctx.message.edit(content=self.client.bot_prefix + 'Unmuted user: %s' % user.mention)
             else:
                 await ctx.message.edit(content=self.client.bot_prefix + 'Could not find user.')
+
+    # Error Handling
+    @clear.error
+    async def clear_error(self, message, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await message.send("Argument [Message Count] missing.")
+
+    @kick.error
+    async def kick_error(self, message, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await message.send("Argument [User] missing.")
+
+    @hackban.error
+    async def hackban_error(self, message, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await message.send("Argument [User ID] missing.")
+
+    @ban.error
+    async def ban_error(self, message, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await message.send("Argument [User] missing.")
+
+    @softban.error
+    async def softban_error(self, message, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await message.send("Argument [User] missing.")
+
+    @unban.error
+    async def unban_error(self, message, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await message.send("Argument [User ID] missing.")
+
+    @mute.error
+    async def mute_error(self, message, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await message.send("Argument [User] missing.")
+
+    @unmute.error
+    async def unmute_error(self, message, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await message.send("Argument [User] missing.")
 
 
 def setup(client):

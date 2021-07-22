@@ -8,32 +8,41 @@ intents.members = True
 client = commands.Bot(command_prefix=".", intents=intents)
 
 
-@client.event
-async def on_ready():
+def change_icon():
     fp = open("boticon.png", "rb")
     icon = fp.read()
-    await sleep(10)
-    await client.user.edit(avatar=icon)
+    client.user.edit(avatar=icon)
+
+
+@client.event
+async def on_ready():
+    channel = client.get_channel(id=802602247983857717)
+    if not client.is_closed():
+        await channel.send("I'm back bitches. :^)")
+    # change_icon()
 
 
 @client.command()
 async def load(ctx, extension):
-    client.load_extension(f'cogs.{extension}')
+    """Loading all Cogs"""
+    client.load_extension(f'Cogs.{extension}')
 
 
 @client.command()
 async def unload(ctx, extension):
+    """Unloading all Cogs"""
     client.unload_extension(f'Cogs.{extension}')
 
 
 @client.command()
 async def reload(ctx, extension):
+    """Reloading (unload + load) all Cogs"""
     client.unload_extension(f'Cogs.{extension}')
-    client.load_extension(f'cogs.{extension}')
+    client.load_extension(f'Cogs.{extension}')
 
 
 for filename in os.listdir("./Cogs"):
     if filename.endswith(".py"):
         client.load_extension(f'Cogs.{filename[:-3]}')
 
-client.run('ODY2MTIxMjQwODg0NTQzNTAw.YPN8Qw.LzeILCBBYy02zBUFaXESvHwhjms')
+client.run('')

@@ -1,0 +1,5 @@
+git+https://github.com/Babak1v9/DiscordBot/main.py@rewrite
+PyNaCl==1.3.0
+pandas
+dnspython==1.16.0
+asnyc-timeout==3.0.1

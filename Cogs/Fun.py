@@ -10,6 +10,7 @@ async def scan_games(client):
             else:
                 print(member.name, member.id, member.game)
 
+
 class Fun(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -19,7 +20,7 @@ class Fun(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("Fun online.")
-        self.client.loop.create_task(scan_games(self.client))
+        # self.client.loop.create_task(scan_games(self.client))
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -29,9 +30,11 @@ class Fun(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.client:
+        if message.author.bot:
             return
-        if "family" or "familie" in message.content.lower():
+        if "family" in message.content.lower():
+            await message.reply("Did you say family? Nothing is stronger than family.")
+        if "familie" in message.content.lower():
             await message.reply("Did you say family? Nothing is stronger than family.")
 
     # Commands

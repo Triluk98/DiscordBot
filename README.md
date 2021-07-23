@@ -37,4 +37,5 @@ Specifiy desired channel by replacing channel_id in Cog.
 Bot then posts an embed in this channel with all emojis which are connected to an specific role.
 If user reacts on the message with one of those emojis, the role will be added.
 
+## API Reference
 * [Discord.py API Reference](https://discordpy.readthedocs.io/en/stable/api.html)

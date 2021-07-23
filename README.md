@@ -8,7 +8,7 @@ Small Discord.py bot inlcuding some Cogs with commands to organize your discord 
 * Anti Spam
 * Role Selection
 
-## Usage
+# Usage
 Antispam consists of a looped event listener which will store the User ID in the txt file "spam_detect" for each message send.
 If the amount of one user's ID exceeds 10 then user will be softbanned, the txt file will be cleared every minute.
 

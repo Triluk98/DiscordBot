@@ -23,7 +23,7 @@ Parameters will be stated with []
 * .softban [user]   - bans and unbans the user
 * .unban [user]     - unbans the user
 * .mute [user]      - mutes the specified user
-# .unmute [user]    - unmutes the specified user
+* .unmute [user]    - unmutes the specified user
 
 ## User Commands
 

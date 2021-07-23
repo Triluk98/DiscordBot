@@ -2,7 +2,7 @@
 
 Small Discord.py bot inlcuding some Cogs with commands to organize your discord server or just return information.
 
-# Featured Cogs
+## Featured Cogs
 * Mod Commands
 * User Commands
 * Anti Spam
